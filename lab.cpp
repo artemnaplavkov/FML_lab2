@@ -15,6 +15,7 @@ int answer;
 
 string line;
 int meter = 0;
+char start_pos;
 
 vector <char> gramG;
 vector <char> gramP;
@@ -31,16 +32,13 @@ int small_check(string gram1) {
 		cout << "incorrect insert \n ";
 		return 0;
 	}
-	else {
-		return 1;
-	}
+	return 1;
 }
 
 int grammatic(string gram1) {
 	GS = make_pair(gram1[0], gram1[4]);
 	P = make_pair(GS, gram1[3]);
 	GPS.push_back(P);
-
 
 	if (gram1.size() == 7) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!gram1[7])) {
@@ -113,6 +111,9 @@ int insert_by_file(ifstream& in) {
 				}
 				else {
 					grammatic(line);
+					if (meter == 3) {
+						start_pos = line[0];
+					}
 				}
 			}
 		}
@@ -138,10 +139,22 @@ int insert_by_yourself() {
 	}
 	cout << "Enter the number of clicks \n";
 	cin >> counter;
-	/*use all new func*/
+	for (int i = 0; i <= counter - 1; i++) {
+		cout << "Insert " << i + 1 << " letter of grammar, by using ->  \n";
+		cin >> gram1;
+		/*use all new func*/
+		int attempt = small_check(gram1);
+		if (attempt == 0) {
+			cout << "Error in line\n";
+			i--;
+			continue;
+		}
+		else {
+			grammatic(gram1);
+		}
+	}
 	return 0;
 }
-
 
 
 
@@ -155,18 +168,21 @@ int main() {
 			cin >> answer;
 			if (answer == 1) {
 				ofstream MyFile("lab.txt");
-				// func insert_by_yourself 
+				cout << "File successfully created \n";
+				insert_by_yourself();
 			}
 			else {
-				cout << "File error. What'a hell are you want from me?" << endl;
+				cout << "File error. What'a hell are you want from me?\n";
 				return 0;
 			}
 		}
 		else {
-			//func insert_by_file
+			insert_by_file(in);
 		}
-
 	}
+
+	//algorithm 
+
 
 	return 0;
 }
