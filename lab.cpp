@@ -32,7 +32,7 @@ vector <pair<pair<char, char>, char>> GPS;
 string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
-int small_check(string gram1) {
+static int small_check(string gram1) {
 	if (gram1[1] != '-' || gram1[2] != '>')
 	{
 		cout << "incorrect insert \n ";
@@ -41,19 +41,19 @@ int small_check(string gram1) {
 	return 1;
 }
 
-int grammatic(string gram1) {
+static void grammatic(string gram1) {
 	GS = make_pair(gram1[0], gram1[4]);
 	P = make_pair(GS, gram1[3]);
 	GPS.push_back(P);
 
-	else if (gram1.size() == 8) {
+	 if (gram1.size() == 8) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!(!gram1[7]))) {
 			GS = make_pair(gram1[0], gram1[7]);
 			P = make_pair(GS, gram1[6]);
 			GPS.push_back(P);
 		}
 	}
-	if (gram1.size() == 10) {
+	else if (gram1.size() == 10) {
 		if (gram1[8] == '|' && (!(!gram1[9])) && (!gram1[10])) {
 			gramG.push_back('@');
 			GS = make_pair(gram1[0], '@');
@@ -69,29 +69,30 @@ int grammatic(string gram1) {
 
 		}
 	}
-	return 0;
+	//return 0;
 }
 
 
-int insert_by_file(ifstream& in) {
+static void insert_by_file() {
 	ifstream in("lab.txt"); 
 	if (in.is_open())
 	{
 		while (std::getline(in, line))
 		{
-			//std::cout << line << std::endl;
 			if (meter == 0) {
 				gram1 = line;
+				int count_len = gram1.length();
 				meter++;
-				for (int i = 0; i <= gram1.size(); i++) {
+				for (int i = 0; i <= count_len; i++) {
 					if (gram1[i] != '{' and gram1[i] != '}' and gram1[i] != ',')
 						gramG.push_back(gram1[i]);
 				}
 			}
 			else if (meter == 1) {
 				gram2 = line;
+				int count_len = gram2.length();
 				meter++;
-				for (int i = 0; i <= gram2.size(); i++) {
+				for (int i = 0; i <= count_len; i++) {
 					if (gram2[i] != '{' and gram2[i] != '}' and gram2[i] != ',')
 						gramP.push_back(gram2[i]);
 				}
@@ -117,21 +118,23 @@ int insert_by_file(ifstream& in) {
 		}
 	}
 	in.close();
-	return 0;
+	//return 0;
 }
 
 
-int insert_by_yourself() {
+static void insert_by_yourself() {
 	cout << "Insert grammatic G like this: {K,L,M,N} \n";
 	cin >> gram1;
-	for (int i = 0; i <= gram1.size(); i++) {
+	int gram1_size = gram1.size();
+	for (int i = 0; i <= gram1_size; i++) {
 		if (gram1[i] != '{' and gram1[i] != '}' and gram1[i] != ',')
 			gramG.push_back(gram1[i]);
 	}
 
 	cout << "Insert grammatic P like this: {a,b,+,-} \n";
 	cin >> gram2;
-	for (int i = 0; i <= gram2.size(); i++) {
+	int gram2_size = gram2.size();
+	for (int i = 0; i <= gram2_size; i++) {
 		if (gram2[i] != '{' and gram2[i] != '}' and gram2[i] != ',')
 			gramP.push_back(gram2[i]);
 	}
@@ -150,7 +153,7 @@ int insert_by_yourself() {
 			grammatic(gram1);
 		}
 	}
-	return 0;
+	//return 0;
 }
 
 
@@ -174,47 +177,52 @@ int main() {
 			}
 		}
 		else {
-			insert_by_file(in);
+			insert_by_file();
 		}
 	}
 
-	for (i = 1;GPS.size()-1;i++) { //deleting invalid ones
+	int GPS_size = GPS.size() - 1;
+	for (int i = 1; i<= GPS_size;i++) { //deleting invalid ones
 		flag = 0;
 		first_letter = GPS[i].first.first;
-		for (j = 1; GPS.size(); j++) {
+		for (int j = 1; j<= GPS_size; j++) {
 			if (GPS[j].first.second == first_letter) {
 				flag = 1;
 			}
 		}
 		if (flag == 0) {
-			for_deleting.push_back(first_letter)
+			for_deleting.push_back(first_letter);
 		}
 	}
 
-	for (i = 1; for_deleting.size(); i++) { //deleting invalid ones
+	int for_deleting_size = for_deleting.size() - 1;
+	for (int i = 1;i<= for_deleting_size; i++) { //deleting invalid ones
 		first_letter = for_deleting[i];
-		for (j = 1; GPS.size()-1; j++) {
+		for (int j = 1; j<=GPS_size; j++) {
 			if (GPS[j].first.second != first_letter and GPS[j].first.first != first_letter) {
 				GPS1.push_back(GPS[j]);
 			}
 		}
 	}
 
-	for (int i = 0; i <= gramG.size() - 1; i++) {
-		for (int j = 0; j <= (alphabet.size() - gramG.size() + 1); j++) {
+
+	int gramG_size = gramG.size() - 1;
+	int alphabet_size = alphabet.size();
+	for (int i = 0; i <= gramG_size; i++) {
+		for (int j = 0; j <= (alphabet_size - gramG_size + 1); j++) {
 			if (gramG[i] == alphabet[j]) {
 				alphabet.erase(j, 1);
 			}
 		}
 	}
 
-	for (int i = 0; i <= GPS.size() - 1; i++) {
+	for (int i = 0; i <= GPS_size; i++) {
 
 		char letter_first_i = GPS1[i].first.first;
 		char transfer = GPS1[i].second;
 		char letter_second = GPS1[i].first.second;
 
-		for (int j = i + 1; j <= GPS.size() - 1; j++) {
+		for (int j = i + 1; j <= GPS_size; j++) {
 			char letter_first_j = GPS1[i].first.first;
 			char alph = alphabet[0];
 
@@ -224,7 +232,8 @@ int main() {
 				alphabet.erase(0, 1);
 				GPS1.erase(GPS.begin() + j);
 
-				for (int l = 0; l <= GPS1.size() - 1; l++) {
+				int GPS1_size = GPS1.size() - 1;
+				for (int l = 0; l <= GPS1_size; l++) {
 					if (GPS1[l].first.second == letter_first_i || GPS1[l].first.second == letter_first_j) {
 						GPS1[l].first.second = alph;
 					}
@@ -239,7 +248,7 @@ int main() {
 	for (int i = 0; GPS1.size() - 1;i++) { //deleting the same
 		for (int j = 0; GPS1.size() - 1;j++) {
 			if (GPS1[i].first.first == GPS1[j].first.first and GPS1[i].second == GPS1[j].second and GPS1[i].first.second == GPS1[j].first.second) {
-				numb_for_del.push_back(j)
+				numb_for_del.push_back(j);
 			}
 		}
 	}
@@ -249,7 +258,8 @@ int main() {
 
 
 	cout << "\n";
-	for (int i = 0; i <= GPS1.size() - 1; i++) {
+	int GPS1_size = GPS1.size() - 1;
+	for (int i = 0; i <= GPS1_size; i++) {
 			cout << GPS1[i].first.first << " -> " << GPS1[i].second << " -> " << GPS1[i].first.second << " \n";
 		}
 	return 0;
