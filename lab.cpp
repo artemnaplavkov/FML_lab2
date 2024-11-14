@@ -16,6 +16,11 @@ int answer;
 string line;
 int meter = 0;
 char start_pos;
+int flag = 0;
+vector <char> for_deleting;
+char first_letter;
+int count_for_delet = 0;
+vector <pair<pair<char, char>, char>> GPS1;
 
 vector <char> gramG;
 vector <char> gramP;
@@ -39,7 +44,7 @@ int grammatic(string gram1) {
 	GS = make_pair(gram1[0], gram1[4]);
 	P = make_pair(GS, gram1[3]);
 	GPS.push_back(P);
-
+	/*/
 	if (gram1.size() == 7) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!gram1[7])) {
 			gramG.push_back('@');
@@ -47,7 +52,7 @@ int grammatic(string gram1) {
 			P = make_pair(GS, gram1[6]);
 			GPS.push_back(P);
 		}
-	}
+	}*/
 	else if (gram1.size() == 8) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!(!gram1[7]))) {
 			GS = make_pair(gram1[0], gram1[7]);
@@ -142,7 +147,6 @@ int insert_by_yourself() {
 	for (int i = 0; i <= counter - 1; i++) {
 		cout << "Insert " << i + 1 << " letter of grammar, by using ->  \n";
 		cin >> gram1;
-		/*use all new func*/
 		int attempt = small_check(gram1);
 		if (attempt == 0) {
 			cout << "Error in line\n";
@@ -181,7 +185,32 @@ int main() {
 		}
 	}
 
-	//algorithm 
+
+	for (i = 1;GPS.size();i++) { //deleting invalid ones
+		flag = 0;
+		first_letter = GPS[i].first.first;
+		for (j = 1; GPS.size(); j++) {
+			if (GPS[j].first.second == first_letter) {
+				flag = 1;
+			}
+		}
+		if (flag == 0) {
+			for_deleting.push_back(first_letter)
+		}
+	}
+
+	for (i = 1; for_deleting.size(); i++) { //deleting invalid ones
+		first_letter = for_deleting[i];
+		for (j = 1; GPS.size(); j++) {
+			if (GPS[j].first.second != first_letter and GPS[j].first.first != first_letter) {
+				GPS1.push_back(GPS[j]);
+			}
+		}
+	}
+
+
+
+	
 
 
 	return 0;
