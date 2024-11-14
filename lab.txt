@@ -1,0 +1,16 @@
+{S,A,B,C,D,E,F,G,N}
+{0,1,a,b,*,\,-}
+S->0A
+S->1B
+A->*E
+B->\D
+C->aB
+C->bE
+D->bE
+D->0F
+D->aG
+E->bD
+E->aG
+E->0N
+N->-E
+F->-D
