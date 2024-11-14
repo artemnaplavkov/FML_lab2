@@ -21,6 +21,7 @@ vector <char> for_deleting;
 char first_letter;
 int count_for_delet = 0;
 vector <pair<pair<char, char>, char>> GPS1;
+vector <int> numb_for_del;
 
 vector <char> gramG;
 vector <char> gramP;
@@ -44,15 +45,7 @@ int grammatic(string gram1) {
 	GS = make_pair(gram1[0], gram1[4]);
 	P = make_pair(GS, gram1[3]);
 	GPS.push_back(P);
-	/*/
-	if (gram1.size() == 7) {
-		if (gram1[5] == '|' && (!(!gram1[6])) && (!gram1[7])) {
-			gramG.push_back('@');
-			GS = make_pair(gram1[0], '@');
-			P = make_pair(GS, gram1[6]);
-			GPS.push_back(P);
-		}
-	}*/
+
 	else if (gram1.size() == 8) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!(!gram1[7]))) {
 			GS = make_pair(gram1[0], gram1[7]);
@@ -185,8 +178,7 @@ int main() {
 		}
 	}
 
-
-	for (i = 1;GPS.size();i++) { //deleting invalid ones
+	for (i = 1;GPS.size()-1;i++) { //deleting invalid ones
 		flag = 0;
 		first_letter = GPS[i].first.first;
 		for (j = 1; GPS.size(); j++) {
@@ -201,17 +193,64 @@ int main() {
 
 	for (i = 1; for_deleting.size(); i++) { //deleting invalid ones
 		first_letter = for_deleting[i];
-		for (j = 1; GPS.size(); j++) {
+		for (j = 1; GPS.size()-1; j++) {
 			if (GPS[j].first.second != first_letter and GPS[j].first.first != first_letter) {
 				GPS1.push_back(GPS[j]);
 			}
 		}
 	}
 
+	for (int i = 0; i <= gramG.size() - 1; i++) {
+		for (int j = 0; j <= (alphabet.size() - gramG.size() + 1); j++) {
+			if (gramG[i] == alphabet[j]) {
+				alphabet.erase(j, 1);
+			}
+		}
+	}
+
+	for (int i = 0; i <= GPS.size() - 1; i++) {
+
+		char letter_first_i = GPS1[i].first.first;
+		char transfer = GPS1[i].second;
+		char letter_second = GPS1[i].first.second;
+
+		for (int j = i + 1; j <= GPS.size() - 1; j++) {
+			char letter_first_j = GPS1[i].first.first;
+			char alph = alphabet[0];
+
+			if (transfer ==GPS1[j].second and letter_second== GPS1[j].first.second) {
+				GPS1[i].first.first = alphabet[0];
+				GPS1[j].first.first = alphabet[0];
+				alphabet.erase(0, 1);
+				GPS1.erase(GPS.begin() + j);
+
+				for (int l = 0; l <= GPS1.size() - 1; l++) {
+					if (GPS1[l].first.second == letter_first_i || GPS1[l].first.second == letter_first_j) {
+						GPS1[l].first.second = alph;
+					}
+					if (GPS1[l].first.first == letter_first_i || GPS1[l].first.first == letter_first_j) {
+						GPS1[l].first.first = alph;
+					}
+				}
+			}
+		}
+	}
+
+	for (int i = 0; GPS1.size() - 1;i++) { //deleting the same
+		for (int j = 0; GPS1.size() - 1;j++) {
+			if (GPS1[i].first.first == GPS1[j].first.first and GPS1[i].second == GPS1[j].second and GPS1[i].first.second == GPS1[j].first.second) {
+				numb_for_del.push_back(j)
+			}
+		}
+	}
+	for (int i = 0; numb_for_del.size() - 1; i++) {
+		GPS1.erase(GPS1.begin() + i);
+	}
 
 
-	
-
-
+	cout << "\n";
+	for (int i = 0; i <= GPS1.size() - 1; i++) {
+			cout << GPS1[i].first.first << " -> " << GPS1[i].second << " -> " << GPS1[i].first.second << " \n";
+		}
 	return 0;
 }
