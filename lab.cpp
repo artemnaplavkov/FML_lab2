@@ -10,7 +10,7 @@ using namespace std;
 string gram1;
 string gram2;
 int counter;
-int file_or_yourself;
+int file_or_yourself=1;
 int answer;
 
 string line;
@@ -46,18 +46,11 @@ static void grammatic(string gram1) {
 	P = make_pair(GS, gram1[3]);
 	GPS.push_back(P);
 
-	 if (gram1.size() == 8) {
+
+	if (gram1.size() == 8) {
 		if (gram1[5] == '|' && (!(!gram1[6])) && (!(!gram1[7]))) {
 			GS = make_pair(gram1[0], gram1[7]);
 			P = make_pair(GS, gram1[6]);
-			GPS.push_back(P);
-		}
-	}
-	else if (gram1.size() == 10) {
-		if (gram1[8] == '|' && (!(!gram1[9])) && (!gram1[10])) {
-			gramG.push_back('@');
-			GS = make_pair(gram1[0], '@');
-			P = make_pair(GS, gram1[9]);
 			GPS.push_back(P);
 		}
 	}
@@ -69,56 +62,49 @@ static void grammatic(string gram1) {
 
 		}
 	}
-	//return 0;
 }
 
 
 static void insert_by_file() {
-	ifstream in("lab.txt"); 
-	if (in.is_open())
-	{
+	ifstream in("lab.txt");
+	if (in.is_open()){
 		while (std::getline(in, line))
 		{
 			if (meter == 0) {
 				gram1 = line;
 				int count_len = gram1.length();
 				meter++;
-				for (int i = 0; i <= count_len; i++) {
-					if (gram1[i] != '{' and gram1[i] != '}' and gram1[i] != ',')
+				for (int i = 0; i <= count_len-1; i++) {
+					if (gram1[i] != '{' and gram1[i] != '}' and gram1[i] != ',') {
 						gramG.push_back(gram1[i]);
+					}
 				}
 			}
 			else if (meter == 1) {
 				gram2 = line;
 				int count_len = gram2.length();
 				meter++;
-				for (int i = 0; i <= count_len; i++) {
-					if (gram2[i] != '{' and gram2[i] != '}' and gram2[i] != ',')
+				for (int i = 0; i <= count_len-1; i++) {
+					if (gram2[i] != '{' and gram2[i] != '}' and gram2[i] != ','){
 						gramP.push_back(gram2[i]);
+						}
 				}
-			}
-			else if (meter==2) {
-				counter = stoi(line);
-				meter++;
 			}
 			else {
 				meter++;
-				int attempt = small_check(line);
-				if (attempt == 0){
-					cout << "Error in " << meter << " line\n";
-					continue;
+				if (line[1] != '-' || line[2] != '>')
+				{
+					cout << "incorrect insert in" << meter+1<< "line \n ";
+					
 				}
 				else {
 					grammatic(line);
-					if (meter == 3) {
-						start_pos = line[0];
-					}
 				}
+				
 			}
 		}
 	}
 	in.close();
-	//return 0;
 }
 
 
@@ -153,14 +139,13 @@ static void insert_by_yourself() {
 			grammatic(gram1);
 		}
 	}
-	//return 0;
 }
 
 
 
 int main() {
-	cout << "Print 1 if you would like to open data from file\n  Print 2 to insert by yourself: \n";
-	cin >> file_or_yourself;
+	//cout << "Print 1 if you would like to open data from file\nPrint 2 to insert by yourself: \n";
+	//cin >> file_or_yourself;
 	if (file_or_yourself == 1) {
 		ifstream in("lab.txt");
 		if (in.is_open() == false) {
@@ -181,59 +166,62 @@ int main() {
 		}
 	}
 
+	start_pos = GPS[0].first.first;
 	int GPS_size = GPS.size() - 1;
-	for (int i = 1; i<= GPS_size;i++) { //deleting invalid ones
+	
+	for (int i = 0; i <= GPS_size; i++) { //deleting invalid ones
 		flag = 0;
 		first_letter = GPS[i].first.first;
-		for (int j = 1; j<= GPS_size; j++) {
-			if (GPS[j].first.second == first_letter) {
-				flag = 1;
-			}
+		for (int j = 0; j <= GPS_size; j++) {
+				if (GPS[j].first.second == first_letter or GPS[i].first.first == start_pos) {
+					flag = 1;
+				}
+		
 		}
 		if (flag == 0) {
 			for_deleting.push_back(first_letter);
 		}
 	}
 
-	int for_deleting_size = for_deleting.size() - 1;
-	for (int i = 1;i<= for_deleting_size; i++) { //deleting invalid ones
-		first_letter = for_deleting[i];
-		for (int j = 1; j<=GPS_size; j++) {
-			if (GPS[j].first.second != first_letter and GPS[j].first.first != first_letter) {
-				GPS1.push_back(GPS[j]);
+	sort(for_deleting.begin(), for_deleting.end());
+	auto it = unique(for_deleting.begin(), for_deleting.end());
+	for_deleting.erase(it, for_deleting.end());
+
+	for (int i = 0; i <= GPS.size()-1; i++) {
+		flag = 1;
+		for (int j = 0; j <= for_deleting.size() - 1; j++) {
+			if (GPS[i].first.first == for_deleting[j]) {
+				flag = 0;
 			}
 		}
+		if (flag == 1) {
+			GPS1.push_back(GPS[i]);
+		}
 	}
-
-
-	int gramG_size = gramG.size() - 1;
-	int alphabet_size = alphabet.size();
-	for (int i = 0; i <= gramG_size; i++) {
-		for (int j = 0; j <= (alphabet_size - gramG_size + 1); j++) {
+	for (int i = 0; i <= gramG.size() - 1; i++) {
+		for (int j = 0; j <= (alphabet.size() - gramG.size() + 1); j++) {
 			if (gramG[i] == alphabet[j]) {
 				alphabet.erase(j, 1);
 			}
 		}
 	}
 
-	for (int i = 0; i <= GPS_size; i++) {
-
+	for (int i = 0; i <= GPS1.size()-1; i++) {
 		char letter_first_i = GPS1[i].first.first;
 		char transfer = GPS1[i].second;
 		char letter_second = GPS1[i].first.second;
 
-		for (int j = i + 1; j <= GPS_size; j++) {
-			char letter_first_j = GPS1[i].first.first;
+		for (int j = i + 1; j <= GPS1.size()-1; j++) {
+			char letter_first_j = GPS1[j].first.first;
 			char alph = alphabet[0];
 
-			if (transfer ==GPS1[j].second and letter_second== GPS1[j].first.second) {
-				GPS1[i].first.first = alphabet[0];
-				GPS1[j].first.first = alphabet[0];
+			if (GPS1[j].second== transfer and  GPS1[j].first.second== letter_second and letter_first_i!= letter_first_j) {
+				GPS1[i].first.first = alph;
+				GPS1[j].first.first = alph;
 				alphabet.erase(0, 1);
-				GPS1.erase(GPS.begin() + j);
+				GPS1.erase(GPS1.begin() + j);
 
-				int GPS1_size = GPS1.size() - 1;
-				for (int l = 0; l <= GPS1_size; l++) {
+				for (int l = 0; l <= GPS1.size()-1; l++) {
 					if (GPS1[l].first.second == letter_first_i || GPS1[l].first.second == letter_first_j) {
 						GPS1[l].first.second = alph;
 					}
@@ -245,22 +233,42 @@ int main() {
 		}
 	}
 
-	for (int i = 0; GPS1.size() - 1;i++) { //deleting the same
-		for (int j = 0; GPS1.size() - 1;j++) {
+	for (int i = 0; i<=GPS1.size() - 1; i++) { //deleting the same
+		for (int j = i+1; j<=GPS1.size() - 1; j++) {
 			if (GPS1[i].first.first == GPS1[j].first.first and GPS1[i].second == GPS1[j].second and GPS1[i].first.second == GPS1[j].first.second) {
-				numb_for_del.push_back(j);
+				numb_for_del.push_back(i);
 			}
 		}
 	}
-	for (int i = 0; numb_for_del.size() - 1; i++) {
-		GPS1.erase(GPS1.begin() + i);
+
+	sort(numb_for_del.begin(), numb_for_del.end());
+	auto it_1	= unique(numb_for_del.begin(), numb_for_del.end());
+	numb_for_del.erase(it_1, numb_for_del.end());
+
+	for (int i = 0;i<= numb_for_del.size() - 1; i++) {
+		GPS1.erase(GPS1.begin() + numb_for_del[i]);
+	}
+	
+	for (int i = 0; i <= GPS1.size() - 1; i++) { //deleting the same
+		for (int j = i + 1; j <= GPS1.size() - 1; j++) {
+			if (GPS1[i].first.first == GPS1[j].first.first and GPS1[i].second == GPS1[j].second and GPS1[i].first.second == GPS1[j].first.second) {
+				numb_for_del.push_back(i);
+			}
+		}
 	}
 
+	sort(numb_for_del.begin(), numb_for_del.end());
+	auto it_2 = unique(numb_for_del.begin(), numb_for_del.end());
+	numb_for_del.erase(it_2, numb_for_del.end());
+
+	for (int i = 0; i <= numb_for_del.size() - 1; i++) {
+		GPS1.erase(GPS1.begin() + numb_for_del[i]);
+	}
 
 	cout << "\n";
 	int GPS1_size = GPS1.size() - 1;
 	for (int i = 0; i <= GPS1_size; i++) {
-			cout << GPS1[i].first.first << " -> " << GPS1[i].second << " -> " << GPS1[i].first.second << " \n";
-		}
+		cout << GPS1[i].first.first << " -> " << GPS1[i].second << " -> " << GPS1[i].first.second << " \n";
+	}
 	return 0;
 }
